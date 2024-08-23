@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform:
+  - AWS::Serverless-2016-10-31
+  - AWS::LanguageExtensions
+Description: Hello world stack
+
+
+Resources:
+
+  HelloHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures:
+        - arm64
+      CodeUri: hello
+      Description: A simple function saying hello
+      Handler: hello.handler
+      MemorySize: 1798
+      PackageType: Zip
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: nodejs20.x
+      Timeout: 120
+      Tracing: Active
+
+
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Simple Lambda role for demo project
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              sts:AssumeRole
+      Policies:
+       - PolicyName: WriteLogs
+         PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+                - cloudwatch:PutMetricData
+              Resource: "*"
+
+
